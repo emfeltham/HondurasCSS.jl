@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # HondurasTools.jl
 
 Tools for cleaning, analyzing, and understanding the Honduras data.
@@ -101,3 +102,7 @@ See `make_data.jl` for a template to process the raw data into clean CSV files.
    1. Depending on how we want to handle people who have a different village code for W3 and W3', we may want to adjust this.
 
 - Depending on the analysis (read: most of the time), we want to remove everyone that is not in one of the 19 microbiome villages (`codebook/microbiome_villages.csv`)
+=======
+# HondurasCSS.jl
+Tools specific to the Honduras CSS project.
+>>>>>>> parent of 4071caf (Merge branch 'main' of github.com:human-nature-lab/HondurasTools.jl)

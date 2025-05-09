@@ -1,10 +1,15 @@
 name = "HondurasCSS"
 uuid = "86995ca9-cb84-4024-835f-b9ba116fef75"
+<<<<<<< HEAD
 authors = ["Eric Martin Feltham <eric.feltham@yale.edu>"]
+=======
+authors = ["emfeltham <eric.feltham@yale.edu>"]
+>>>>>>> parent of 4071caf (Merge branch 'main' of github.com:human-nature-lab/HondurasTools.jl)
 version = "0.1.0"
 
 [deps]
 BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
+<<<<<<< HEAD
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CategoricalArrays = "324d7699-5711-5eae-9e2f-1d82baa6b597"
 ColorVectorSpace = "c3611d14-8923-5661-9e6a-0046d554d3a4"
@@ -13,10 +18,14 @@ DataFramesMeta = "1313f7d8-7da2-5740-9ea0-a2ca25f37964"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+=======
+ColorVectorSpace = "c3611d14-8923-5661-9e6a-0046d554d3a4"
+>>>>>>> parent of 4071caf (Merge branch 'main' of github.com:human-nature-lab/HondurasTools.jl)
 Effects = "8f03c58b-bd97-4933-a826-f71b64d2cca2"
 GLM = "38e38edf-8417-5370-95a0-9cbb8c7f171a"
 GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
 HondurasTools = "53a3418b-e4dc-4b79-9710-56922bb5ab08"
+<<<<<<< HEAD
 JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 KernelDensity = "5ab0869b-81aa-558d-bb23-cbf5423bbe9b"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -50,3 +59,20 @@ Statistics = "1.11.1"
 StatsBase = "0.34.5"
 StatsFuns = "1.5.0"
 StatsModels = "0.7.4"
+=======
+KernelDensity = "5ab0869b-81aa-558d-bb23-cbf5423bbe9b"
+MixedModels = "ff71e718-51f3-5ec2-a782-8ffcbfa3c316"
+MultivariateStats = "6f286f6a-111f-5878-ab1e-185364afe411"
+NiceDisplay = "7d3b42f7-c40e-4233-afc8-58239d6810c5"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+StatsFuns = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
+
+[compat]
+BSON = "0.3.9"
+HondurasTools = "0.1.0"
+KernelDensity = "0.6.9"
+NiceDisplay = "1.0.0"
+Pkg = "1.11.0"
+>>>>>>> parent of 4071caf (Merge branch 'main' of github.com:human-nature-lab/HondurasTools.jl)
