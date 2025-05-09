@@ -126,15 +126,15 @@ function networkinfo(
     @subset! cxf :relationship .∈ Ref(relnames)
     
     @time ndf = initialize_ndf(cx, cxf, node_fund, g_fund, mods);
-    @info "initialized"
+    @show "initialized"
 
     gcx = groupby(cxf, [:village_code, :relationship, :wave]);
     @time addgraphs!(ndf, gcx)
-    @info "graphs added"
+    @show "graphs added"
 
     if !isnothing(mods) & !isnothing(rr)
         for v in mods
-            @info "modularity: " * string(v)
+            @show "modularity: " * string(v)
             # modularity partition vectors
             grouppartition!(ndf, rr, v, unitname)
             # treat missing as another category
@@ -145,10 +145,10 @@ function networkinfo(
                 ) for x in ndf[!, v]
             ];
         end
-        @info "modularity complete"
+        @show "modularity complete"
     end
 
-    @info "setup complete"
+    @show "setup complete"
 
     @time network_info!(ndf, mods);
 

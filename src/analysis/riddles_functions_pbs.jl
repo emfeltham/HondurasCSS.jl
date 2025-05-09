@@ -103,7 +103,7 @@ function parametricboot2stage(
 		m2_s[i] = Vector{mt}(undef, 3)
 	end
 
-	@info "setup complete"
+	@time @show "setup complete"
 
 	_pb2stage_K!(
 		bootparams,

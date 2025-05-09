@@ -90,7 +90,7 @@ function t_parametricboot2stage(
     # stage 1 link
     invlink = logistic;
 
-	@info "setup complete"
+	@time @show "setup complete"
 
 	t_pb2stage_K!(
 		bootparams,
