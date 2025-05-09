@@ -41,6 +41,7 @@ import GLM.Normal
 # Additional exports
 export logistic, logit
 
+# File output
 import BSON
 import JLD2
 
