@@ -62,7 +62,9 @@ function contrasttable(cts; cidigits = 2, pdigits = 3)
     );
 
     dfe.Subject = ifelse.(occursin.("_a", string.(dfe[!, "vbl"])), "Tie", "Respondent")
+    dfe[findfirst(dfe.vbl .== Symbol("kin431")), "Subject"] = "Tie";
     select!(dfe, Not(:vbl))
+
 
     # NHB p-value reporting
     for pn in [:p_tpr, :p_fpr, :p_j]

@@ -2,10 +2,13 @@
 
 function distance_eff!(
 	layout, rg, margvar, margvarname;
+	qt = nothing,
 	dropkin = true,
 	tnr = true,
 	trp = 0.4,
 	coloredticks = false,
+	axh = 250,
+	axw = nothing,
 	axiskwargs...
 )
 
@@ -37,6 +40,8 @@ function distance_eff!(
 		limitx = false,
 		tr = trp,
 		coloredticks,
+		axh = axh,
+    	axw = axw,
 		axiskwargs...
 	)
 
@@ -139,6 +144,13 @@ function distance_eff!(
 		# lll[2, 1] = leg
 	end
 
+	if !isnothing(qt)
+        # vlines!(ax, qt, color = :black, linestyle = :dash)
+        qmin, qmx = qt
+        
+        vspan!(ax, mn, qmin, color = (yale.grays[3], 0.15))
+        vspan!(ax, qmx, mx, color = (yale.grays[3], 0.15))
+    end
 
 	return ax, ax_r
 end

@@ -12,7 +12,7 @@ function rocplot!(
     kinlegend = true,
     extramargin = false,
     dolegend = true,
-    legargs = (framevisible = false, tellheight = false, tellwidth = false, orientation = :vertical, nbanks = 1)
+    legargs = (halign = :left, framevisible = false, tellheight = false, tellwidth = false, orientation = :vertical, nbanks = 1)
 )
 
     ellipse = ifelse("Σ" ∈ names(rg), true, false);
@@ -26,8 +26,11 @@ function rocplot!(
         kinmarker = false
     end
 
+    la = layout[1, 1]
+    lb = layout[1, 2]
+
     rocplot_!(
-        layout[1, 1], rg, margvar, margvarname;
+        la, rg, margvar, margvarname;
         markeropacity,
         ellipse,
         ellipsecolor,
@@ -42,14 +45,13 @@ function rocplot!(
     vbltype = eltype(rg[!, margvar])
     cts = (vbltype <: AbstractFloat) | (vbltype <: Int)
     if dolegend
-        lx = layout[1, 2] = GridLayout()
         roclegend!(
-            lx, rg[!, margvar], margvarname, ellipse, ellipsecolor, cts;
+            lb, rg[!, margvar], margvarname, ellipse, ellipsecolor, cts;
             kinlegend,
             legargs...
         )
-        colsize!(layout, 1, Relative(4/5))
-        colgap!(layout, 0)
+        # colsize!(layout, 1, Relative(4/5))
+        # colgap!(layout, 0)
     end
 end
 
@@ -140,8 +142,9 @@ function _cat_legend!(
     end
 
     Legend(
-        layout[1, 2], elems, lvls, nms;
+        layout[1, 1], elems, lvls, nms;
         legargs...,
+        halign = :left,
     )
     
     # this may need adjustment for some plots
@@ -154,9 +157,11 @@ function roclegend!(
     legargs...
 )
 
+    layout = GridLayout(layout)
+
     if !cts
         _cat_legend!(
-            layout, vbl_vals, varname, ellipse, ellipsecolor,
+            layout[1, 1], vbl_vals, varname, ellipse, ellipsecolor,
             kinlegend; legargs...
         )
     else
@@ -168,7 +173,8 @@ function roclegend!(
         Colorbar(
             layout[1, 1];
             limits = rangescale, colormap = :berlin,
-            flipaxis = false, vertical = true,
+            flipaxis = true, vertical = true,
+            halign = :left,
             label = varname,
             tellheight = false
         )
@@ -182,11 +188,14 @@ function roclegend!(
     
             lvls = [["No", "Yes"]];
             nms = ["Kin tie"]
+            
             Legend(
                 layout[2, 1], elems, lvls, nms;
-                legargs...,
                 orientation = :vertical,
-                nbanks = 1
+                nbanks = 1,
+                halign = :left,
+                valign = :top,
+                legargs...,
             )
         end    
     end
@@ -282,7 +291,8 @@ function roclegend_dist!(
     kinlegend = true,
     legargs...
 )
-
+    layout = GridLayout(layout)
+    
     rowsize!(layout, 1, Relative(3.75/5))
     rangescale = extrema(vbl_vals)
 
@@ -291,6 +301,7 @@ function roclegend_dist!(
         limits = rangescale, colormap = :berlin,
         flipaxis = false, vertical = true,
         label = varname,
+        halign = :left,
         tellheight = false
     )
     
@@ -313,6 +324,7 @@ function roclegend_dist!(
         layout[2, 1], elems, lvls, nms;
         legargs...,
         orientation = :vertical,
+        halign = :left,
         nbanks = 1
     )
 
@@ -321,6 +333,7 @@ function roclegend_dist!(
     Legend(
         extraelement, [elems], ["No path"], "";
         orientation = :vertical, nbanks = 1,
-        framevisible = false, legargs...
+        framevisible = false, legargs...,
+        halign = :left,
     )
 end

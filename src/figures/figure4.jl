@@ -154,3 +154,27 @@ function make_figure4!(fg, md, wd, transforms; ellipsecolor = (:grey, 0.4), hull
 end
 
 export make_figure4!
+
+function wealth_interaction_panel(layout, wd)
+    vt = :wealth_d1_4_mean_a
+    vk = :wealth_d1_4
+    ##
+    su = sunique(wd[!, vt]);
+    mt = fill(NaN, length(su), length(su));
+    for (i, e) in enumerate(su), (j, f) in enumerate(su)
+        ix = findfirst((wd[!, vt] .== e) .& (wd[!, vk] .== f))
+        mt[i, j] = wd[!, :j][ix]
+    end
+    
+    ax = Axis3(
+        layout;
+        xlabel = "Pair wealth (mean)", ylabel = "Cognizer wealth",
+        zlabel = "J",
+        height = 375
+        # width =300
+    )
+    sp = wireframe!(ax, su, su, mt; color = ratecolor(:j))
+    return ax, sp
+end
+
+export wealth_interaction_panel

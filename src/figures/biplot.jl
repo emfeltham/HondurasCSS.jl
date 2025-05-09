@@ -1,5 +1,57 @@
 # biplot.jl
 
+function biplot2!(
+	layout, bpd;
+	ellipsecolor = (yale.grays[end-1], 0.4),
+	ellipsehull = nothing,
+	dropkin_eff = true,
+	tnr = true,
+	kinlegend = true,
+)
+
+	l1 = layout[1, 1]
+	l2 = layout[1, 2]
+
+	if bpd.margvar ∉ [:dists_p, :dists_a, :are_related_dists_a]
+		# colsize!(layout, 1, Relative(1/2))
+
+		rocplot!(
+			l1,
+			bpd.rg, bpd.margvar, bpd.margvarname;
+			ellipsecolor,
+			ellipsehull,
+			markeropacity = nothing,
+			kinlegend
+		)
+
+		effectsplot!(
+			l2, bpd.rg, bpd.margvar, bpd.margvarname, tnr;
+			dropkin = dropkin_eff,
+		)
+	else
+		# colsize!(layout, 1, Relative(1/2))
+		
+
+		distance_roc!(
+			l1,
+			bpd.rg, bpd.margvar, bpd.margvarname;
+			markeropacity = 1,
+			ellipsecolor,
+			ellipsehull
+		)
+
+		distance_eff!(
+			l2, bpd.rg, bpd.margvar, bpd.margvarname;
+			dropkin = dropkin_eff,
+			coloredticks = true,
+		)
+	end
+	
+	return l1, l2
+end
+
+export biplot2!
+
 function biplot!(
 	layout, bpd;
 	ellipsecolor = (yale.grays[end-1], 0.4),
