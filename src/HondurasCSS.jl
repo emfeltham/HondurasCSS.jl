@@ -12,6 +12,7 @@ import Base.getindex
 # Package management
 # Note: For reproducibility, use MixedModels v4.14.0 (pre-xtol_zero_abs)
 # Pkg.add(name="MixedModels", version="4.14.0")
+# add GLM, Effects, GeometryBasics, Random, KernelDensity, StatsFuns, ColorVectorSpace, MultivariateStats, BSON, JLD2
 
 # Core dependencies with re-exports
 using Reexport
@@ -19,6 +20,7 @@ using Reexport
 @reexport using NiceDisplay
 @reexport using NiceDisplay.Graphs
 @reexport using NiceDisplay.GraphMakie
+
 
 # Modeling packages
 @reexport using GLM
