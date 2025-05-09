@@ -68,20 +68,17 @@ end
 export addmargins!
 
 function altermargins_bs!(
-    margindict, bm, βset, invlink, K; bivar = true
+    margindict, kys, bms, βset, invlink, K; bivar = true
 )
 
-    bms = [deepcopy(bm) for _ in eachindex(1:length(margindict))]
-    kys = (collect∘keys)(margindict)
-
     # for (i, p) in (enumerate∘eachindex)(kys)
-    Threads.@threads for i in eachindex(1:length(margindict))
+    Threads.@threads for i in eachindex(kys)
         p = kys[i]
         e, _ = margindict[p]
         ses, bv = j_calculations_pb!(e, bms[i], βset, invlink, K; bivar)
         e[!, :err_j] = ses
         e[!, :ci_j] = ci.(e[!, :j], e[!, :err_j])
-        e[!, :Σ] = eachrow(bv)
+        e[!, :Σ] = cov.(eachrow(bv))
     end
 end
 
