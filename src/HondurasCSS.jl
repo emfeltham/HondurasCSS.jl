@@ -43,6 +43,7 @@ export logistic, logit
 
 # File output
 import BSON
+import JLD2
 
 # File organization by category
 const CORE_FILES = [
@@ -140,7 +141,9 @@ include(joinpath("process", "utilities.jl"))
 include("process/final processing.jl")
 
 export HondurasConfig, hondurasconfig
-export main, demographics, create_combined_demographics, create_css_data, create_cr
+export
+    demographics, create_combined_demographics,
+    create_network_data, create_css_data, create_cr
 
 const pers_vars = [
     :extraversion,
