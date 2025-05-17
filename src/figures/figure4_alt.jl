@@ -71,6 +71,9 @@ end
 export make_figure4_alt!
 
 function figure3!(los, vars, md; ellipsecolor = (yale.grays[end-2], 0.75), ellipsehulls = nothing)
+
+	md = deepcopy(md)
+
 	for (e, lx) in zip(vars, los)
 		
 		rg, margvarname = md[e]
@@ -106,13 +109,18 @@ function figure3!(los, vars, md; ellipsecolor = (yale.grays[end-2], 0.75), ellip
 				axsz = 250,
 			)
 
-			distance_eff!(
+			if e == :dists_a
+				select!(bpd.rg, Not(:tpr))
+			end
+			ax, axr = distance_eff!(
 				l2, bpd.rg, bpd.margvar, bpd.margvarname;
 				dropkin = true,
 				coloredticks = true,
 				axh = 250,
 				axw = 275
 			)
+			tcks = [5, 10, 15]
+            ax.xticks = (tcks, string.(tcks))
 		else
 			rocplot!(
 				l1,
