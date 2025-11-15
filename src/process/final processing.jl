@@ -234,7 +234,14 @@ create_wave4_respondent_data(rd)
 
 Create a DataFrame for wave 4 respondent data, with appropriate non-imputed variables.
 """
-function create_wave4_respondent_data(rd)
+create_wave4_respondent_data(rd) = create_respondent_data(rd, 4)
+
+"""
+create_wave4_respondent_data(rd)
+
+Create a DataFrame for a wave of respondent data, not imputing particular variables variables.
+"""
+function create_respondent_data(rd, wave)
     # Variables that should not be imputed
     noupd_resp = [
     :wave, :complete, :data_source,
@@ -246,8 +253,8 @@ function create_wave4_respondent_data(rd)
     ]
 
     # Create wave 4 dataset
-    r4 = respwave(rd, noupd_resp; ids=ids, wave=4)
-    return r4
+    r = respwave(rd, noupd_resp; ids = ids, wave)
+    return r
 end
 
 ## Process Household Data
