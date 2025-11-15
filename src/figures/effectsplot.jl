@@ -1,6 +1,47 @@
 # effectsplot.jl
 
 function effectsplot!(
+    l, rg, margvar, margvarname, tnr, qt;
+    dropkin = true,
+    dotlegend = false,
+    dolegend = true,
+    axh = 250,
+    axw = nothing,
+    axiskwargs...
+)
+
+    # modify rg if kin are to be dropped
+    rg = if dropkin & (string(kin) ∈ names(rg))
+        @subset rg .!$kin
+    else
+        deepcopy(rg)
+    end
+    vx = intersect(string(kin), [string(margvar)], names(rg))
+    sort!(rg, vx)
+
+    vbltype = eltype(rg[!, margvar])
+    cts = (vbltype <: AbstractFloat) | (vbltype <: Int)
+
+    # data plot
+    if cts
+        effplot_cts!(l[1, 1], rg, margvar, margvarname, tnr; axw, axh, qt = qt, axiskwargs...)
+    else
+        effplot_cat!(l[1, 1], rg, margvar, margvarname, tnr; axw, axh, axiskwargs...)
+    end
+
+    # legend
+    jstat = "j" ∈ names(rg)
+    if dolegend
+        effectslegend!(l[1, 2], jstat, cts, dotlegend; tr = 0.6)
+        colsize!(l, 2, Auto(0.2))
+        colgap!(l, 40) 
+    end
+    
+end
+
+export effectsplot!
+
+function effectsplot!(
     l, rg, margvar, margvarname, tnr;
     dropkin = true,
     dotlegend = false,
@@ -24,16 +65,17 @@ function effectsplot!(
 
     # data plot
     func = ifelse(cts, effplot_cts!, effplot_cat!)
-    func(l[1, 1], rg, margvar, margvarname, tnr; axw, axh, axiskwargs...)
+    ax = func(l[1, 1], rg, margvar, margvarname, tnr; axw, axh, axiskwargs...)
 
     # legend
     jstat = "j" ∈ names(rg)
     if dolegend
         effectslegend!(l[1, 2], jstat, cts, dotlegend; tr = 0.6)
         colsize!(l, 2, Auto(0.2))
-        colgap!(l, 20)
+        cg = ifelse(func == effplot_cts!, 40, 10)
+        colgap!(l, cg)
     end
-    
+    return ax
 end
 
 export effectsplot!
@@ -41,13 +83,9 @@ export effectsplot!
 function effplot_cat!(
     layout, rg, vbl, margvarname, tnr;
     axh = 250,
-    axw = 300,
+    axw = nothing, # 300,
     axiskwargs...
 )
-
-    if isnothing(axw)
-        axw = 300
-    end
 
     jstat = "j" ∈ names(rg)
     fpronly = any(["tpr", "ci_tpr"] .∉ Ref(names(rg)))
@@ -66,32 +104,60 @@ function effplot_cat!(
         lvls
     )
 
-    ax = Axis(
-        layout;
-        xticks,
-        ylabel = "Rate",
-        xlabel = margvarname,
-        height = axh,
-        width = axw,
-        yticklabelcolor = ratecolor(:tpr) + ratecolor(:fpr),
-        axiskwargs...
-    )
+    ax = if isnothing(axw)
+        Axis(
+            layout[1, 1];
+            halign = :left,
+            xticks,
+            ylabel = "Rate",
+            xlabel = margvarname,
+            height = axh,
+            yticklabelcolor = ratecolor(:tpr) + ratecolor(:fpr),
+            axiskwargs...
+        )
+    else
+        Axis(
+            layout[1, 1];
+            halign = :left,
+            xticks,
+            ylabel = "Rate",
+            xlabel = margvarname,
+            height = axh,
+            width = axw,
+            yticklabelcolor = ratecolor(:tpr) + ratecolor(:fpr),
+            axiskwargs...
+        )
+    end
 
     if jstat
         # add secondary axis right for J
         # if j statistic data is included, add point and rangebars
         # make legend that includes J statistic with color oi[7]
 
-        ax_r = Axis(
-            layout;
-            xlabel = margvarname,
-            ylabel = "J",
-            yaxisposition = :right,
-            height = axh,
-            width = axw,
-            yticklabelcolor = ratecolor(:j),
-            axiskwargs...
-        )
+        ax_r = if isnothing(axw)
+            Axis(
+                layout[1, 1];
+                halign = :left,
+                xlabel = margvarname,
+                ylabel = "J",
+                yaxisposition = :right,
+                height = axh,
+                yticklabelcolor = ratecolor(:j),
+                axiskwargs...
+            )
+        else
+            Axis(
+                layout[1, 1];
+                halign = :left,
+                xlabel = margvarname,
+                ylabel = "J",
+                yaxisposition = :right,
+                height = axh,
+                width = axw,
+                yticklabelcolor = ratecolor(:j),
+                axiskwargs...
+            )
+        end
 
         # only include y axis ticks, label, ticklabels
         hidespines!(ax_r)
@@ -136,7 +202,11 @@ function effplot_cat!(
         end
     end
 
-    return ax
+    return if jstat
+        ax, ax_r
+    else
+        ax, nothing
+    end
 end
 
 export effplot_cat!
@@ -147,31 +217,51 @@ function effplot_cts!(
     limitx = true,
     axh = 250,
     axw = nothing,
-    axiskwargs...
+    dropkin = true,
+    coloredticks = true,
+    qt = nothing,
+    axiskwargs...,
 )
 
     jstat = "j" ∈ names(rg)
     fpronly = any(["tpr", "ci_tpr"] .∉ Ref(names(rg)))
 
+    tickcolor = if coloredticks
+        ratecolor(:tpr) + ratecolor(:fpr)
+    else
+        :black
+    end
+
     ax = if isnothing(axw)
         Axis(
             layout[1, 1];
+            halign = :left,
             ylabel = "Rate",
             xlabel = margvarname,
             height = axh,
-            yticklabelcolor = ratecolor(:tpr) + ratecolor(:fpr),
+            yticklabelcolor = tickcolor,
             axiskwargs...
         )
     else
         Axis(
             layout[1, 1];
+            halign = :left,
             ylabel = "Rate",
             xlabel = margvarname,
             height = axh,
             width = axw,
-            yticklabelcolor = ratecolor(:tpr) + ratecolor(:fpr),
+            yticklabelcolor = tickcolor,
             axiskwargs...
         )
+    end
+
+    if !isnothing(qt)
+        # vlines!(ax, qt, color = :black, linestyle = :dash)
+        xmn, xmx = extrema(rg[!, margvar])
+        qmin, qmx = qt
+        
+        vspan!(ax, xmn, qmin, color = (yale.grays[3], 0.15))
+        vspan!(ax, qmx, xmx, color = (yale.grays[3], 0.15))
     end
 
     if jstat
@@ -179,16 +269,30 @@ function effplot_cts!(
         # if j statistic data is included, add point and rangebars
         # make legend that includes J statistic with color oi[7]
 
-        ax_r = Axis(
-            layout;
-            xlabel = margvarname,
-            ylabel = "J",
-            yaxisposition = :right,
-            height = 250,
-            width = 300,
-            yticklabelcolor = ratecolor(:j),
-            axiskwargs...
-        )
+        ax_r = if isnothing(axw)
+            Axis(
+                layout[1, 1];
+                halign = :left,
+                xlabel = margvarname,
+                ylabel = "J",
+                yaxisposition = :right,
+                height = axh,
+                yticklabelcolor = ratecolor(:j),
+                axiskwargs...
+            )
+        else
+            Axis(
+                layout[1, 1];
+                halign = :left,
+                xlabel = margvarname,
+                ylabel = "J",
+                yaxisposition = :right,
+                height = axh,
+                width = axw,
+                yticklabelcolor = ratecolor(:j),
+                axiskwargs...
+            )
+        end
 
         # only include y axis ticks, label, ticklabels
         hidespines!(ax_r)
@@ -200,29 +304,61 @@ function effplot_cts!(
     
     rt = ifelse(fpronly, [:fpr], [:tpr, :fpr, :j])    
 
-    for r in rt
-        ciname = "ci_" * string(r) |> Symbol
-        clr = ratecolor(r)
+    if ("kin431" ∈ names(rg)) & !dropkin
+        gr = groupby(rg, :kin431)
+        for (ky, g) in pairs(gr)
+            lsty = ifelse(ky.kin431, :dot, :solid)
+            
+            for r in rt
+                ciname = "ci_" * string(r) |> Symbol
+                clr = ratecolor(r)
+                
+                ax_ = if (r == :j) & jstat
+                    ax_r
+                else ax
+                end
         
-        ax_ = if (r == :j) & jstat
-            ax_r
-        else ax
-        end
-
-        xs = rg[!, margvar];
-        ys = rg[!, r];
-        lwr = [x[1] for x in rg[!, ciname]];
-        upr = [x[2] for x in rg[!, ciname]];
+                xs = g[!, margvar];
+                ys = g[!, r];
+                lwr = [x[1] for x in g[!, ciname]];
+                upr = [x[2] for x in g[!, ciname]];
+                
+                if tnr & (r == :fpr)
+                    ys = 1 .- ys
+                    lwr = 1 .- lwr
+                    upr = 1 .- upr
+                end
         
-        if tnr & (r == :fpr)
-            ys = 1 .- ys
-            lwr = 1 .- lwr
-            upr = 1 .- upr
+                lines!(ax_, xs, ys, color = clr, linestyle = lsty)
+                band!(ax_, xs, lwr, upr; color = (clr, tr)) # no method for tuples
+            end
         end
-
-        lines!(ax_, xs, ys, color = clr)
-        band!(ax_, xs, lwr, upr; color = (clr, tr)) # no method for tuples
+    else
+        for r in rt
+            ciname = "ci_" * string(r) |> Symbol
+            clr = ratecolor(r)
+            
+            ax_ = if (r == :j) & jstat
+                ax_r
+            else ax
+            end
+    
+            xs = rg[!, margvar];
+            ys = rg[!, r];
+            lwr = [x[1] for x in rg[!, ciname]];
+            upr = [x[2] for x in rg[!, ciname]];
+            
+            if tnr & (r == :fpr)
+                ys = 1 .- ys
+                lwr = 1 .- lwr
+                upr = 1 .- upr
+            end
+    
+            lines!(ax_, xs, ys, color = clr)
+            band!(ax_, xs, lwr, upr; color = (clr, tr)) # no method for tuples
+        end
     end
+
     
     if limitx
         xlims!(ax, extrema(rg[!, margvar]))
@@ -244,6 +380,7 @@ function effectslegend!(
     fpronly = false,
     tr = 0.6,
     lkwargs = (
+        halign = :left,
         framevisible = false,
         orientation = :vertical,
         tellheight = false,
@@ -299,13 +436,4 @@ function effectslegend!(
             lkwargs...
         )
     end
-end
-
-# old
-function EffectLegend!(ll, elems)
-    Legend(
-        ll[1, 1], elems, ["TPR", "TNR"], "Accuracy", framevisible = false,
-        orientation = :vertical,
-        tellheight = false, tellwidth = true, nbanks = 1,
-    )
 end

@@ -2,12 +2,17 @@
 
 function distance_eff!(
 	layout, rg, margvar, margvarname;
+	qt = nothing,
 	dropkin = true,
-	legend = true,
 	tnr = true,
 	trp = 0.4,
+	coloredticks = false,
+	axh = 250,
+	axw = nothing,
 	axiskwargs...
 )
+
+	fpronly = any(["tpr", "ci_tpr"] .∉ Ref(names(rg)))
 
 	# modify rg if kin are to be dropped
 	rg = if dropkin & (string(kin) ∈ names(rg))
@@ -28,16 +33,22 @@ function distance_eff!(
 	mn, mx = extrema(rg_fin[!, margvar])
 
 	# set up xticks
-	# digits_ = 2
-	# xtv = round.(Makie.get_tickvalues(WilkinsonTicks(10), identity, mn, mx); digits = digits_)
-	# xtvl = string.(xtv)
 
 	ax, ax_r = effplot_cts!(
 		layout[1, 1], rg_fin, margvar, margvarname, tnr;
+		dropkin,
 		limitx = false,
 		tr = trp,
+		coloredticks,
+		axh = axh,
+    	axw = axw,
 		axiskwargs...
 	)
+
+	if fpronly
+		ax.ylabel = "True negative rate"
+		#ax_r.ylabel = "True negative rate"
+	end
 
 	colsize!(layout, 1, Auto(3))
 
@@ -49,7 +60,6 @@ function distance_eff!(
 
 	# number of post of no path points, one for each rate mult. by the number
 	# of rows (usually one, possibly two for kin)
-	fpronly = any(["tpr", "ci_tpr"] .∉ Ref(names(rg)))
 	nrates = if !fpronly
 		sum(["tpr", "fpr", "j"] .∈ Ref(names(rg)))
 	else
@@ -68,6 +78,9 @@ function distance_eff!(
 	for (r, x) in zip(rt, eachcol(x_))
 		x = convert(Vector{AbstractFloat}, x)
 		est = rg_inf[!, r]
+
+		mkr = replace(rg_inf.kin431, true => :cross, false => '●')
+
 		ci_name = Symbol("ci_" * string(r))
 		lwr = [first(a) for a in rg_inf[!, ci_name]]
 		upr = [last(a) for a in rg_inf[!, ci_name]]
@@ -84,7 +97,7 @@ function distance_eff!(
 			ax
 		end
 
-		scatter!(ax_current, x, est; color = ratecolor(r))
+		scatter!(ax_current, x, est; color = ratecolor(r), marker = mkr)
 		rangebars!(ax_current, x, lwr, upr; color = ratecolor(r))
 	end
 
@@ -105,11 +118,39 @@ function distance_eff!(
 		xlims!(ax_r, low = mn)
 	end
 
+	lll = GridLayout(layout[1, 2])
+
 	jstat = "j" ∈ names(rg)
-	effectslegend!(
-		layout[1, 2], jstat, true, true;
-		fpronly, tr = trp
-	)
+	
+	if !fpronly
+		effectslegend!(
+			lll[1,1], jstat, true, true;
+			fpronly, tr = trp
+		)
+	end
+	if length(unique(rg.kin431)) > 1
+		# Create line elements for legend
+		solid_line = LineElement(linestyle = :solid, color = :black, linewidth = 2)
+		dotted_line = LineElement(linestyle = :dot, color = :black, linewidth = 2)
+
+		# Create legend with custom entries
+		leg = Legend(lll[2,1],
+			[solid_line, dotted_line],
+			["No", "Yes"],
+			"Kin tie",
+			framevisible = false, valign = :top)
+
+		# Position legend in figure layout
+		# lll[2, 1] = leg
+	end
+
+	if !isnothing(qt)
+        # vlines!(ax, qt, color = :black, linestyle = :dash)
+        qmin, qmx = qt
+        
+        vspan!(ax, mn, qmin, color = (yale.grays[3], 0.15))
+        vspan!(ax, qmx, mx, color = (yale.grays[3], 0.15))
+    end
 
 	return ax, ax_r
 end
