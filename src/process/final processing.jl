@@ -244,12 +244,12 @@ Create a DataFrame for a wave of respondent data, not imputing particular variab
 function create_respondent_data(rd, wave)
     # Variables that should not be imputed
     noupd_resp = [
-    :wave, :complete, :data_source,
-    :survey_start, :survey_end, :municipality, :office,
-    :survey_version, :status,
-    :new_building, :moved_village, :moved_building,
-    :age_range, :preg_now, :avoid_preg_now,
-    :fajero  # intervention variable
+        :wave, :complete, :data_source,
+        :survey_start, :survey_end, :municipality, :office,
+        :survey_version, :status,
+        :new_building, :moved_village, :moved_building,
+        :age_range, :preg_now, :avoid_preg_now,
+        :fajero  # intervention variable
     ]
 
     # Create wave 4 dataset
