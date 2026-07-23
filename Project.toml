@@ -1,7 +1,7 @@
 name = "HondurasCSS"
 uuid = "86995ca9-cb84-4024-835f-b9ba116fef75"
 authors = ["emfeltham <eric.feltham@yale.edu>"]
-version = "0.2.0"
+version = "0.2.1"
 
 [deps]
 BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
@@ -25,7 +25,7 @@ ColorVectorSpace = "0.11.0"
 Effects = "1.4.0"
 GLM = "1.9.0"
 GeometryBasics = "0.5.9"
-HondurasTools = "0.1.0"
+HondurasTools = "0.1, 0.2"
 JLD2 = "0.4.54"
 KernelDensity = "0.6.9"
 MixedModels = "4.14.0"
