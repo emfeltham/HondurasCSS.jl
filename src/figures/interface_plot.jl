@@ -1,13 +1,13 @@
 # interface_plot.jl
 
 """
-        interfaceplot(fg = Figure(); saveplot = true, pth = "/WORKAREA/work/HONDURAS_GATES/E_FELTHAM/honduras-css/figures/personal-private-question.jpg")
+        interfaceplot(fg = Figure(); saveplot = true, pth = "survey_interface.jpg")
 
 ## Description
 
 Display the survey interface
 """
-function interfaceplot(fg = Figure(); saveplot = true, pth = "/WORKAREA/work/HONDURAS_GATES/E_FELTHAM/honduras-css/figures/personal-private-question.jpg")
+function interfaceplot(fg = Figure(); saveplot = true, pth = "survey_interface.jpg")
 
     lo = fg[1, 1] = GridLayout()
     ax = lo[1,1] = Axis(fg, aspect = DataAspect())
