@@ -53,11 +53,13 @@ function figure4!(los, vars, md, ellipsecolor, hulls)
                 markeropacity = 1,
             )
         elseif mv == :dists_a
-            distance_eff!(
+            ax, axr = distance_eff!(
                 los[i], tp.rg, mv, tp.margvarname;
                 dropkin = false,
-                coloredticks = false
+                coloredticks = false,
             )
+            tcks = [5, 10, 15]
+            ax.xticks = (tcks, string.(tcks))
         end
 	end
 end
@@ -68,6 +70,9 @@ end
 ## Description
 """
 function make_figure4!(fg, md, wd, transforms; ellipsecolor = (:grey, 0.4), hulls = nothing)
+
+    md = deepcopy(md)
+
     vars = [
         :relation, :man_a, :degree_mean_a,
         :religion_c_a, :wealth_d1_4_diff_a, :wealth_d1_4_mean_a,
@@ -96,10 +101,10 @@ function make_figure4!(fg, md, wd, transforms; ellipsecolor = (:grey, 0.4), hull
         md[:dists_a].rg.tpr .= tprbar
     end
 
-    lo1 = fg[1, 1] = GridLayout()
-    lo = GridLayout(lo1[1:2, 1:3])
-    
-    lo2 = GridLayout(fg[2, 1])
+    lo = fg[1, 1] = GridLayout()
+    lo1 = GridLayout(lo[1, 1], halign = :left) 
+
+    lo2 = GridLayout(lo[2, 1]) 
     lo2a = GridLayout(lo2[1, 1])
     lo2b = GridLayout(lo2[1, 2])
     
@@ -109,30 +114,22 @@ function make_figure4!(fg, md, wd, transforms; ellipsecolor = (:grey, 0.4), hull
         for j in 1:3
             cnt+=1
             if cnt <= length(vars)
-                l = lo[i, j] = GridLayout()
+                l = lo1[i, j] = GridLayout()
                 push!(los, l)
             end
         end
     end
+
+    colsize!(lo1, 1, Relative(1/3))
+
     figure4!(los, vars, md, ellipsecolor, hulls)
 
-    los = GridLayout[];
-    cnt = 0
-    for i in 1:2
-        for j in 1:3
-            cnt+=1
-            if cnt <= length(vars)
-                l = lo[i, j] = GridLayout()
-                push!(los, l)
-            end
-        end
-    end
-
-    los2 = [GridLayout(lo2a[1,1]), GridLayout(lo2a[1,2])]
+    los2 = [GridLayout(lo2a[1, 1]), GridLayout(lo2a[1, 2])]
     figure4!(los2, [:dists_p, :dists_a], md, ellipsecolor, hulls)
 
     vt = :wealth_d1_4_mean_a
     vk = :wealth_d1_4
+
     ##
     su = sunique(wd[!, vt]);
     mt = fill(NaN, length(su), length(su));
@@ -146,7 +143,7 @@ function make_figure4!(fg, md, wd, transforms; ellipsecolor = (:grey, 0.4), hull
         xlabel = "Pair wealth (mean)", ylabel = "Cognizer wealth",
         zlabel = "J",
         height = 375
-        # width =300
+        # width = 300
     )
     sp = wireframe!(ax, su, su, mt; color = ratecolor(:j))
 
@@ -154,3 +151,27 @@ function make_figure4!(fg, md, wd, transforms; ellipsecolor = (:grey, 0.4), hull
 end
 
 export make_figure4!
+
+function wealth_interaction_panel(layout, wd)
+    vt = :wealth_d1_4_mean_a
+    vk = :wealth_d1_4
+    ##
+    su = sunique(wd[!, vt]);
+    mt = fill(NaN, length(su), length(su));
+    for (i, e) in enumerate(su), (j, f) in enumerate(su)
+        ix = findfirst((wd[!, vt] .== e) .& (wd[!, vk] .== f))
+        mt[i, j] = wd[!, :j][ix]
+    end
+    
+    ax = Axis3(
+        layout;
+        xlabel = "Pair wealth (mean)", ylabel = "Cognizer wealth",
+        zlabel = "J",
+        height = 375
+        # width =300
+    )
+    sp = wireframe!(ax, su, su, mt; color = ratecolor(:j))
+    return ax, sp
+end
+
+export wealth_interaction_panel

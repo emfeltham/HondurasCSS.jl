@@ -22,7 +22,8 @@ function distance_roc!(
     markeropacity = nothing,
     roctitle = true,
     kinlegend = true,
-    extramargin = false
+    extramargin = false,
+	axsz = 250,
 )
 
 	# existence variable
@@ -42,7 +43,7 @@ function distance_roc!(
 		ellipsehull,
 		roctitle,
 		kinmarker = true,
-		axsz = 250,
+		axsz,
 		extramargin,
 	)
 
