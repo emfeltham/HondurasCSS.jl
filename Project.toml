@@ -1,7 +1,7 @@
 name = "HondurasCSS"
 uuid = "86995ca9-cb84-4024-835f-b9ba116fef75"
-authors = ["Eric Martin Feltham <eric.feltham@yale.edu>"]
-version = "0.1.0"
+authors = ["emfeltham <eric.feltham@yale.edu>"]
+version = "0.2.0"
 
 [deps]
 BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
