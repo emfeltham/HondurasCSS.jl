@@ -137,7 +137,8 @@ export ci_rates!
 
 ## Description
 
-Create a reference grid from the unique values of specified units with specified variable values (`variables`). Units will be repeated if repeated measurement variables are included (e.g., `relation`).
+Create a reference grid from the unique values of specified units with specified
+variable values (`variables`). Units will be repeated if repeated measurement variables are included (e.g., `relation`).
 
 """
 function referencegridunit(

@@ -18,6 +18,26 @@ function make_figure1(fprm)
     return fg, layout_all, layout_main, layout_legend
 end
 
+function make_figure1_separate(fprm)
+    Random.seed!(2024)
+
+    fgs = [Figure(figure_padding = 0) for _ in 1:3];
+    los = [GridLayout(fgs[i][1,1]) for i in 1:3]
+    
+    layout_all = fg[1:2, 1:2] = GridLayout();
+    layout_main = layout_all[1, 1:3] = GridLayout();
+    layout_legend = layout_all[2, 1:3] = GridLayout();
+    
+    los = backgroundplot!(los, fprm; diagnostic = false)
+    # for i in 1:2; colsize!(flo, i, Aspect(1, 1.0)) end
+    # for i in 1:2; rowsize!(flo, i, Aspect(1, 1.0)) end
+    background_legend!(layout_legend[1, 1])
+
+    labelpanels!([los...]; lbs = :lowercase)
+
+    return fg, layout_all, layout_main, layout_legend
+end
+
 export make_figure1
 
 function background_legend!(layout_legend)

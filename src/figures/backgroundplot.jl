@@ -352,6 +352,29 @@ function backgroundplot!(
     return los
 end
 
+function backgroundplot!(los, fprm; diagnostic = false)
+
+    inner_plotting!(fprm, diagnostic)
+
+    # define Axis objects
+    axs = [];
+
+    for lo in los
+        ax = Axis(lo[1, 1]; backgroundcolor = :transparent, aspect = 1)
+        hidedecorations!(ax)
+        hidespines!(ax)
+        push!(axs, ax)
+        push!(los, lo)
+    end
+
+    node_color, node_size = node_properties(fprm.graphs[1], fprm.v)
+    
+    fullplot!(axs[1], fprm.poses[1], fprm.graphs[1], node_color, node_size)
+    sampleableplot!(axs[2], fprm.poses[2], fprm.graphs[2:3], fprm.v)
+    sampledplot!(axs[3], fprm.poses[2], fprm.graphs[2], fprm.v)
+    return axs
+end
+
 export backgroundplot!
 
 function inner_plotting!(fprm, diagnostic)
